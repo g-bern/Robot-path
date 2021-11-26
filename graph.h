@@ -29,6 +29,10 @@ public:
 
     void addVertexByParent(int parentX, int parentY, int valueX, int valueY, int position);
 
-    const vertex* find(int valueX, int valueY);
+    void addEdge(int valueX1, int valueY1, int valueX2, int valueY2, int position);
+
+    bool isEmpty();
+
+    vertex* find(int valueX, int valueY);
 };
 #endif // GRAPH_H

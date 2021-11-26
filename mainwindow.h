@@ -7,6 +7,7 @@
 #include <vector>
 #include <QPainter>
 #include <windows.h>
+#include "graph.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,7 +22,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -39,11 +40,7 @@ private:
     bool** obstaclesAreas;
     int startX = indent, startY = maxY - step,
         endX = maxX - step, endY = indent;
-    //std::pair<int, int> start, end;
-    /*
-        start = std::pair(indent, maxY - step),
-        end = std::pair(maxX - step, indent); //Начальная и конечная позиции
-    */
+
     int r = 1; //радиус робота
 };
 #endif // MAINWINDOW_H

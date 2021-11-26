@@ -138,7 +138,25 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
 
+    Graph area;
+    s = (maxX - indent) / step;
+    s1 = (maxY - indent) / step;
+    for(int i = 0; i < s; i++){
+        for(int j = 0; j < s1; j++){
+
+            if(obstaclesAreas[i][j]){
+                continue;
+            }
+
+            if(area.isEmpty()){
+                area.addVertex(i, j);
+                continue;
+            }
+
+        }
+    }
     ui->setupUi(this);
+    this->setWindowTitle("qwerty");
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)

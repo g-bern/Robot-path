@@ -37,8 +37,8 @@ void Graph::addVertexByParent(int parentX, int parentY, int valueX, int valueY, 
 void Graph::addEdge(int valueX1, int valueY1, int valueX2, int valueY2, int positionAtoB){
     auto a = find(valueX1, valueY1);
     auto b = find(valueX2, valueY2);
-    a->neighbours[positionAtoB] = b;
-    b->neighbours[opposite(positionAtoB)] = a;
+    a.neighbours[positionAtoB] = &b;
+    b.neighbours[opposite(positionAtoB)] = &a;
 }
 
 bool Graph::isEmpty(){
@@ -49,11 +49,10 @@ bool Graph::isEmpty(){
     }
 }
 
-Graph::vertex* Graph::find(int valueX, int valueY){
+Graph::vertex& Graph::find(int valueX, int valueY){
     for(auto &i : G){
         if(i->x == valueX && i->y == valueY){
-            return i;
+            return *i;
         }
     }
-    return nullptr;
 }

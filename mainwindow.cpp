@@ -153,6 +153,27 @@ MainWindow::MainWindow(QWidget *parent)
                 continue;
             }
 
+            if(j != 0){
+
+                //Новая вершина в направлении 3 от родителя
+                area.addVertexByParent(i, j - 1, i, j, 3);
+
+                //Связь с вершиной в направлении 0
+                if(i != 0 && j != 0 && !obstaclesAreas[i-1][j-1]) {
+                    area.addEdge(i, j, i-1, j-1, 1);
+                }
+
+                //Связь с вершиной в направлении 1
+                if(i != 0 && !obstaclesAreas[i-1][j]) {
+                    area.addEdge(i, j, i - 1, j, 1);
+                }
+
+                //Связь с вершиной в направлении 2
+                if(i != 0 && j != (s1 - 1) && !obstaclesAreas[i-1][j+1]) {
+                    area.addEdge(i, j, i - 1, j+1, 1);
+                }
+
+            }
         }
     }
     ui->setupUi(this);

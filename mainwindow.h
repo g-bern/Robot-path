@@ -35,12 +35,17 @@ private:
         int w;
         int h;
     };
+    struct cord{
+        int x;
+        int y;
+    };
     Ui::MainWindow *ui;
     std::vector<obstacle> obstacles; //препятствия
     bool** obstaclesAreas;
-    int startX = indent, startY = maxY - step,
-        endX = maxX - step, endY = indent;
-
+    int startX = 0, startY = 0,
+        endX = 0, endY = 0;
+    vector<cord> way;
+    vector<Graph::vertex> fullWay;
     int r = 1; //радиус робота
 };
 #endif // MAINWINDOW_H

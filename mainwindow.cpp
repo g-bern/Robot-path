@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include <QMessageBox>
+#include <iostream>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -38,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
             obstacles.emplace_back(gamma);
 
         } else if(ok && item == "Установить начальную позицию"){
+            h1:
             ok = false;
             x = QInputDialog::getInt(this, tr("Ввод X"),
                                          tr("Значение"), 0, indent, (maxX - indent - step), 1, &ok);
@@ -45,11 +47,21 @@ MainWindow::MainWindow(QWidget *parent)
                                          tr("Значение"), 0, indent, (maxY - indent - step), 1, &ok);
             x = (x / step) * step;
             y = (y / step) * step;
-
+            int f = (r / step) * step + indent;
+            if(r % step != 0){
+                f += step;
+            }
+            if(x < f || x > (maxX - f + step) || y < f || y > (maxY - f + step)){
+                QMessageBox messageBox;
+                messageBox.critical(0,"Ошибка","Выбранная точка находится за границей доступного поля");
+                messageBox.setFixedSize(500,200);
+                goto h1;
+            }
             startX = x;
             startY = y;
 
         } else if(ok && item == "Установить конечную позицию"){
+            h2:
             ok = false;
             x = QInputDialog::getInt(this, tr("Ввод X"),
                                          tr("Значение"), 0, indent, (maxX - indent - step), 1, &ok);
@@ -57,7 +69,16 @@ MainWindow::MainWindow(QWidget *parent)
                                          tr("Значение"), 0, indent, (maxY - indent - step), 1, &ok);
             x = (x / step) * step;
             y = (y / step) * step;
-
+            int f = (r / step) * step + indent;
+            if(r % step != 0){
+                f += step;
+            }
+            if(x < f || x > (maxX - f + step) || y < f || y > (maxY - f + step)){
+                QMessageBox messageBox;
+                messageBox.critical(0,"Ошибка","Выбранная точка находится за границей доступного поля");
+                messageBox.setFixedSize(500,200);
+                goto h2;
+            }
             endX = x;
             endY = y;
 
@@ -66,14 +87,29 @@ MainWindow::MainWindow(QWidget *parent)
             r = QInputDialog::getInt(this, tr("Ввод радиуса"),
                                      tr("Значение"), 0, 0, 50, 1, &ok);
 
-        } else if(!ok){
+        } else if(ok && item == "Завершить ввод"){
             break;
+        } else if(!ok){
+            exit(0);
         }
+    }
+    if(!startX || !startY){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Ошибка","Не введена точка старта");
+        messageBox.setFixedSize(500,200);
+        goto h1;
+    }
+    if(!endX || !endY){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Ошибка","Не введена точка финиша");
+        messageBox.setFixedSize(500,200);
+        goto h2;
     }
 //конец ввода координат препятствий и позиций
 
-    int s = (maxX - indent) / step;
-    int s1 = (maxY - indent) / step;
+    int s, s1;
+    s1 = (maxX - indent) / step;
+    s = (maxY - indent) / step;
     obstaclesAreas = new bool*[s];
     for(int i = 0; i < s; i++){
         obstaclesAreas[i] = new bool[s1];
@@ -122,25 +158,71 @@ MainWindow::MainWindow(QWidget *parent)
         } else if(k.y > maxY){
             k.y = maxY;
         }
-        s = k.w / step;
-        s1 = k.h / step;
-        for(int j = (k.x - indent) / step; j < s; j++){
-            for(int l = (k.y - indent) / step; l < s1; l++){
-                obstaclesAreas[j][l] = true;
-            }
-        }
-
         if(k.w + k.x > maxX - indent){
             k.w -= (k.w + k.x) - maxX;
         }
         if(k.h + k.y > maxY - indent){
             k.h -= (k.h + k.y) - maxY;
         }
+
+        s = (k.x - indent + k.w) / step;
+        s1 = (k.y - indent + k.h) / step;
+        for(int j = (k.y - indent) / step; j < s1; j++){
+            for(int l = (k.x - indent) / step; l < s; l++){
+                obstaclesAreas[j][l] = true;
+            }
+        }
+
     }
 
     Graph area;
-    s = (maxX - indent) / step;
-    s1 = (maxY - indent) / step;
+    s1 = (maxX - indent) / step;
+    s = (maxY - indent) / step;
+
+    int p = (r / 10) * 10;
+    if(r % step != 0){
+        p += step;
+    }
+
+    //верхняя грань
+    for(int i = 0; i < (p / step); i++){
+        for(int j = 0; j < s1; j++){
+            obstaclesAreas[i][j] = true;
+        }
+    }
+    //левая грань
+    for(int i = 0; i < s; i++){
+        for(int j = 0; j < (p / step); j++){
+            obstaclesAreas[i][j] = true;
+        }
+    }
+    //нижняя грань
+    for(int i = s-1; i >= s - (p / step); i--){
+        for(int j = 0; j < s1; j++){
+            obstaclesAreas[i][j] = true;
+        }
+    }
+    //правая грань
+    for(int i = 0; i < s; i++){
+        for(int j = s1 - (p / step); j < s1; j++){
+            obstaclesAreas[i][j] = true;
+        }
+    }
+
+    /*cout << "\n------------------------------------\n";
+    for(int i = 0; i < s; i++){
+        for(int j = 0; j < s1; j++){
+            if(obstaclesAreas[i][j]){
+                cout << "1 ";
+            } else {
+               cout << "0 ";
+            }
+        }
+        cout << endl;
+    }
+    cout << "\n------------------------------------\n";*/
+
+
     for(int i = 0; i < s; i++){
         for(int j = 0; j < s1; j++){
 
@@ -149,35 +231,51 @@ MainWindow::MainWindow(QWidget *parent)
             }
 
             if(area.isEmpty()){
-                area.addVertex(i, j);
+                area.addVertex(j, i);
                 continue;
             }
 
-            if(j != 0){
-
-                //Новая вершина в направлении 3 от родителя
-                area.addVertexByParent(i, j - 1, i, j, 3);
-
+            if(!obstaclesAreas[i][j]) {
+                if(!obstaclesAreas[i][j-1]){
+                    //Новая вершина в направлении 3 от родителя
+                    area.addVertexByParent(j - 1, i, j, i, 3);
+                } else {
+                    area.addVertex(j, i);
+                }
                 //Связь с вершиной в направлении 0
                 if(i != 0 && j != 0 && !obstaclesAreas[i-1][j-1]) {
-                    area.addEdge(i, j, i-1, j-1, 1);
+                    area.addEdge(j, i, j-1, i-1, 0);
                 }
 
                 //Связь с вершиной в направлении 1
                 if(i != 0 && !obstaclesAreas[i-1][j]) {
-                    area.addEdge(i, j, i - 1, j, 1);
+                    area.addEdge(j, i, j, i - 1, 1);
                 }
 
                 //Связь с вершиной в направлении 2
                 if(i != 0 && j != (s1 - 1) && !obstaclesAreas[i-1][j+1]) {
-                    area.addEdge(i, j, i - 1, j+1, 1);
+                    area.addEdge(j, i, j + 1, i-1, 2);
                 }
-
+            } else {
+                continue;
             }
         }
     }
+
+    pair<int, int> startCell = pair((startX - indent) / step, (startY - indent) / step);
+    pair<int, int> endCell = pair((endX - indent) / step, (endY - indent) / step);
+
+    fullWay = area.deikstrasAlgo(startCell.first, startCell.second, endCell.first, endCell.second);
+
+
     ui->setupUi(this);
-    this->setWindowTitle("qwerty");
+    this->setWindowTitle(" РГЗ по МПиАА / Бернадский");
+
+}
+
+pair<int, int> coords(pair<int, int> value){
+    return pair(value.first * step + step / 2,
+                value.second * step + step / 2);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -186,9 +284,18 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QPainter painter(this); // Создаём объект отрисовщика
     // Устанавливаем кисть абриса
     painter.setPen(QPen(Qt::gray, 0, Qt::SolidLine, Qt::FlatCap));
+    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+    int s = (r / 10) * 10;
+    if(r % step != 0){
+        s += step;
+    }
+    painter.drawRect(indent, indent, s, maxY - indent);
+    painter.drawRect(indent, indent, maxX - indent, s);
+    painter.drawRect(maxX - s, indent, s, maxY - indent);
+    painter.drawRect(indent, maxY - s, maxX - indent, s);
 
     //Прорисовка сетки
-    painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+
     for(int i = indent; i <= maxX; i+=step){
         painter.drawLine(i, indent, i, maxY);
     }
@@ -201,11 +308,23 @@ void MainWindow::paintEvent(QPaintEvent *event)
         painter.drawRect(s.x, s.y, s.w, s.h);
     }
 
+
+
+    painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
+
+    for(int i = 0; i < fullWay.size() - 1; i++){
+        auto e = coords(pair(fullWay[i].x + indent / step, fullWay[i].y + indent / step));
+        auto e1 = coords(pair(fullWay[i+1].x + indent / step, fullWay[i+1].y + indent / step));
+        painter.drawLine(e.first, e.second, e1.first, e1.second);
+    }
+
     //установка точек начала и конца маршрута
+    painter.setPen(QPen(Qt::gray, 0, Qt::SolidLine, Qt::FlatCap));
     painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
     painter.drawEllipse(startX, startY, step, step);
     painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
     painter.drawEllipse(endX, endY, step, step);
+
 }
 
 MainWindow::~MainWindow()

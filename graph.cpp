@@ -12,6 +12,13 @@ void Graph::addVertex(int valueX, int valueY){
 
 }
 
+void Graph::clear(){
+    for(auto &a : G){
+        delete a;
+    }
+    G.clear();
+}
+
 int opposite(int a){
     switch(a){
         case 0: return 4;
@@ -187,75 +194,3 @@ Graph::vertex& Graph::find(int valueX, int valueY){
         }
     }
 }
-
-
-
-
-/*
-vector<int> shortest_path(Graph &graph, int start_vertex, int end_vertex) {
-    vector<float> distances;
-    vector<bool> visited;
-    vector<int> result = {};
-    int currentVertex1, currentVertex2, minIndex;
-    float minDistance, delta;
-
-    if (graph.get_vertices().size() <= 1 || start_vertex == end_vertex
-    || graph.get_adjacent_vertices(end_vertex).empty()
-    || graph.get_adjacent_vertices(start_vertex).empty()) {
-
-        return result;
-
-    }
-
-    for (int i = 0; i < graph.get_vertices().size(); i++) {
-        distances.push_back(FLT_MAX);
-
-        visited.push_back(false);
-    }
-    distances[start_vertex] = 0;
-///
-    do {
-        minIndex = INT_MAX;
-        minDistance = FLT_MAX;
-
-        for (int i = 0; i < graph.get_vertices().size(); i++) {
-            if (!visited[i] && distances[i] < minDistance) {
-                minDistance = distances[i];
-                minIndex = i;
-            }
-        }
-
-        if (minIndex < INT_MAX) {
-            for (int i = 0; i < graph.get_adjacent_vertices(minIndex).size(); i++) {
-                currentVertex1 = graph.get_adjacent_vertices(minIndex)[i];
-                delta = minDistance + graph.edge_weight(minIndex, currentVertex1);
-
-                if (delta < distances[currentVertex1]) {
-                    distances[currentVertex1] = delta;
-                }
-            }
-            visited[minIndex] = true;
-        }
-    } while (minIndex < INT_MAX);
-
-    if (distances[end_vertex] < FLT_MAX) {
-
-        currentVertex1 = end_vertex;
-        result.push_back(currentVertex1);
-
-        for (int i = 0; i < graph.get_adjacent_vertices(currentVertex1).size(); i++) {
-
-            if(currentVertex1 == start_vertex) break;
-
-            currentVertex2 = graph.get_adjacent_vertices(currentVertex1)[i];
-            delta = distances[currentVertex1] - graph.edge_weight(currentVertex1, currentVertex2);
-            if (delta == distances[currentVertex2]) {
-                result.emplace(result.begin(), currentVertex2);
-                currentVertex1 = currentVertex2;
-                i = -1;
-            }
-        }
-    }
-    return result;
-}
-*/

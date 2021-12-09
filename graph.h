@@ -52,6 +52,8 @@ public:
 
     vertex& find(int valueX, int valueY);
 
+    void clear();
+
 private:
     vector<vertex*> G;
 };

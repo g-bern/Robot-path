@@ -35,8 +35,86 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Действия</string>
+    </property>
+    <addaction name="action"/>
+    <addaction name="action_11"/>
+    <addaction name="action_2"/>
+    <addaction name="action_3"/>
+    <addaction name="action_4"/>
+    <addaction name="action_5"/>
+    <addaction name="action_8"/>
+    <addaction name="action_9"/>
+    <addaction name="action_10"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="action_6"/>
+    <addaction name="action_7"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menuTest"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action">
+   <property name="text">
+    <string>Добавить новое препятствие</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Изменить точку старта</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>Изменить точку финиша</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>Изменить размер робота</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>Изменить размер клетки</string>
+   </property>
+  </action>
+  <action name="action_6">
+   <property name="text">
+    <string>Сохранить как...</string>
+   </property>
+  </action>
+  <action name="action_7">
+   <property name="text">
+    <string>Загрузить из файла</string>
+   </property>
+  </action>
+  <action name="action_8">
+   <property name="text">
+    <string>Показать стандартный вид</string>
+   </property>
+  </action>
+  <action name="action_9">
+   <property name="text">
+    <string>Показать вид (сетка + робот-материальная точка)</string>
+   </property>
+  </action>
+  <action name="action_10">
+   <property name="text">
+    <string>Удалить все препятствия</string>
+   </property>
+  </action>
+  <action name="action_11">
+   <property name="text">
+    <string>Удалить последнее добавленное препятствие</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
